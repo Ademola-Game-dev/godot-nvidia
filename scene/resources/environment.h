@@ -162,6 +162,11 @@ private:
 	float sdfgi_probe_bias = 1.1;
 	void _update_sdfgi();
 
+	// Raytracing
+	bool raytracing_enabled = false;
+	PackedFloat32Array raytracing_params; // 16 floats, initialized on first use
+	void _update_raytracing();
+
 	// Glow
 	bool glow_enabled = false;
 	Vector<float> glow_levels;
@@ -348,6 +353,12 @@ public:
 	float get_sdfgi_normal_bias() const;
 	void set_sdfgi_probe_bias(float p_bias);
 	float get_sdfgi_probe_bias() const;
+
+	// Raytracing
+	void set_raytracing_enabled(bool p_enabled);
+	bool is_raytracing_enabled() const;
+	void set_raytracing_params(const PackedFloat32Array &p_params);
+	PackedFloat32Array get_raytracing_params() const;
 
 	// Glow
 	void set_glow_enabled(bool p_enabled);

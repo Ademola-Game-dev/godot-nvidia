@@ -603,6 +603,39 @@ void Environment::_update_sdfgi() {
 			sdfgi_probe_bias);
 }
 
+// Raytracing
+
+void Environment::set_raytracing_enabled(bool p_enabled) {
+	raytracing_enabled = p_enabled;
+	_update_raytracing();
+}
+
+bool Environment::is_raytracing_enabled() const {
+	return raytracing_enabled;
+}
+
+void Environment::set_raytracing_params(const PackedFloat32Array &p_params) {
+	raytracing_params = p_params;
+	// Ensure we always have 16 elements
+	raytracing_params.resize(16);
+	RS::get_singleton()->environment_set_raytracing_params(environment, raytracing_params);
+}
+
+PackedFloat32Array Environment::get_raytracing_params() const {
+	PackedFloat32Array result = raytracing_params;
+	if (result.size() < 16) {
+		result.resize(16);
+	}
+	return result;
+}
+
+void Environment::_update_raytracing() {
+	RS::get_singleton()->environment_set_raytracing(
+			environment,
+			raytracing_enabled);
+	RS::get_singleton()->environment_set_raytracing_params(environment, raytracing_params);
+}
+
 // Glow
 
 void Environment::set_glow_enabled(bool p_enabled) {
@@ -1430,6 +1463,17 @@ void Environment::_bind_methods() {
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "sdfgi_normal_bias"), "set_sdfgi_normal_bias", "get_sdfgi_normal_bias");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "sdfgi_probe_bias"), "set_sdfgi_probe_bias", "get_sdfgi_probe_bias");
 
+	// Raytracing
+
+	ClassDB::bind_method(D_METHOD("set_raytracing_enabled", "enabled"), &Environment::set_raytracing_enabled);
+	ClassDB::bind_method(D_METHOD("is_raytracing_enabled"), &Environment::is_raytracing_enabled);
+	ClassDB::bind_method(D_METHOD("set_raytracing_params", "params"), &Environment::set_raytracing_params);
+	ClassDB::bind_method(D_METHOD("get_raytracing_params"), &Environment::get_raytracing_params);
+
+	ADD_GROUP("Raytracing", "raytracing_");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "raytracing_enabled"), "set_raytracing_enabled", "is_raytracing_enabled");
+	ADD_PROPERTY(PropertyInfo(Variant::PACKED_FLOAT32_ARRAY, "raytracing_params"), "set_raytracing_params", "get_raytracing_params");
+
 	// Glow
 
 	ClassDB::bind_method(D_METHOD("set_glow_enabled", "enabled"), &Environment::set_glow_enabled);
@@ -1654,6 +1698,7 @@ Environment::Environment() {
 	_update_ssao();
 	_update_ssil();
 	_update_sdfgi();
+	_update_raytracing();
 	_update_glow();
 	_update_fog();
 	_update_adjustment();
