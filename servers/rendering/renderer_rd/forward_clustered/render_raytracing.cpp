@@ -1501,7 +1501,7 @@ void RenderRaytracing::update_uniform_set(const RenderDataRD *p_render_data) {
 		// Get params from environment
 		float rt_params_data[16] = { 0 };
 		if (p_render_data && p_render_data->environment.is_valid()) {
-			const float *env_params = RendererEnvironmentStorage::get_singleton()->environment_get_raytracing_params_ptr(p_render_data->environment);
+			const float *env_params = RendererEnvironmentStorage::get_singleton()->environment_get_pathtracing_params_ptr(p_render_data->environment);
 			if (env_params) {
 				memcpy(rt_params_data, env_params, sizeof(float) * 16);
 			}

@@ -253,11 +253,11 @@ public:
 	virtual void environment_set_sdfgi_frames_to_converge(RSE::EnvironmentSDFGIFramesToConverge p_frames) = 0;
 	virtual void environment_set_sdfgi_frames_to_update_light(RSE::EnvironmentSDFGIFramesToUpdateLight p_update) = 0;
 
-	// Raytracing
-	void environment_set_raytracing(RID p_env, bool p_enable);
-	bool environment_get_raytracing_enabled(RID p_env) const;
-	void environment_set_raytracing_params(RID p_env, const PackedFloat32Array &p_params);
-	PackedFloat32Array environment_get_raytracing_params(RID p_env) const;
+	// Pathtracing
+	void environment_set_pathtracing(RID p_env, bool p_enable);
+	bool environment_get_pathtracing_enabled(RID p_env) const;
+	void environment_set_pathtracing_params(RID p_env, const PackedFloat32Array &p_params);
+	PackedFloat32Array environment_get_pathtracing_params(RID p_env) const;
 
 	// Adjustment
 	void environment_set_adjustment(RID p_env, bool p_enable, float p_brightness, float p_contrast, float p_saturation, bool p_use_1d_color_correction, RID p_color_correction);

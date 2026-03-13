@@ -1967,8 +1967,7 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 		}
 
 		if (p_render_data->environment.is_valid()) {
-			// Enable raytracing if set in environment.
-			rt_set_enabled(RendererEnvironmentStorage::get_singleton()->environment_get_raytracing_enabled(p_render_data->environment));
+			rt_set_enabled(RendererEnvironmentStorage::get_singleton()->environment_get_pathtracing_enabled(p_render_data->environment));
 
 			if (environment_get_sdfgi_enabled(p_render_data->environment) && get_debug_draw_mode() != RSE::VIEWPORT_DEBUG_DRAW_UNSHADED) {
 				scene_features.set(SCENE_FEATURE_SDFGI);
@@ -2054,13 +2053,13 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 
 	// Create TLAS for raytracing if enabled
 	if (rt_enabled && rb_data.is_valid() && raytracing && raytracing->get_shader()) {
-		// Create or destroy DLSS RR buffers based on RT_PARAM_DLSS_RR_ENABLED.
+		// Create or destroy DLSS RR buffers based on denoiser selection.
 		// This must happen BEFORE update_uniform_set so the correct buffers are bound.
 		bool dlss_rr_enabled = false;
 		if (p_render_data && p_render_data->environment.is_valid()) {
-			const float *env_params = RendererEnvironmentStorage::get_singleton()->environment_get_raytracing_params_ptr(p_render_data->environment);
+			const float *env_params = RendererEnvironmentStorage::get_singleton()->environment_get_pathtracing_params_ptr(p_render_data->environment);
 			if (env_params) {
-				dlss_rr_enabled = (env_params[SceneShaderRaytracing::RT_PARAM_DLSS_RR_ENABLED] != 0.0f);
+				dlss_rr_enabled = ((uint32_t)env_params[SceneShaderRaytracing::RT_PARAM_DENOISER] == RSE::PT_DENOISER_DLSS_RAY_RECONSTRUCTION);
 			}
 		}
 		if (dlss_rr_enabled) {
@@ -2433,11 +2432,11 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 		// Determine RT pipeline flags based on current settings
 		uint32_t rt_flags = SceneShaderRaytracing::RT_FLAG_NONE;
 		uint32_t sample_count = 1;
-		uint32_t max_bounces = 8;
+		uint32_t max_bounces = 3;
 
 		// Check environment settings for VIS_MODE, sample count, max bounces, and DLSS RR
 		if (p_render_data && p_render_data->environment.is_valid()) {
-			const float *env_params = RendererEnvironmentStorage::get_singleton()->environment_get_raytracing_params_ptr(p_render_data->environment);
+			const float *env_params = RendererEnvironmentStorage::get_singleton()->environment_get_pathtracing_params_ptr(p_render_data->environment);
 			if (env_params) {
 				if (env_params[SceneShaderRaytracing::RT_PARAM_VIS_MODE] != 0.0f) {
 					rt_flags |= SceneShaderRaytracing::RT_FLAG_DEBUG_VIS_ENABLED;
@@ -2445,7 +2444,7 @@ void RenderForwardClustered::_render_scene(RenderDataRD *p_render_data, const Co
 				sample_count = MAX(1u, (uint32_t)env_params[SceneShaderRaytracing::RT_PARAM_SAMPLE_COUNT]);
 				max_bounces = MAX(1u, MIN(8u, (uint32_t)env_params[SceneShaderRaytracing::RT_PARAM_MAX_BOUNCES]));
 				// Buffer creation/destruction is handled earlier in the frame (before uniform set creation)
-				if (env_params[SceneShaderRaytracing::RT_PARAM_DLSS_RR_ENABLED] != 0.0f) {
+				if ((uint32_t)env_params[SceneShaderRaytracing::RT_PARAM_DENOISER] == RSE::PT_DENOISER_DLSS_RAY_RECONSTRUCTION) {
 					rt_flags |= SceneShaderRaytracing::RT_FLAG_DLSS_RR_ENABLED;
 				}
 			}
@@ -4311,7 +4310,7 @@ void RenderForwardClustered::sdfgi_update(const Ref<RenderSceneBuffers> &p_rende
 	}
 
 	// SDFGI is incompatible with raytracing -- disable entirely when RT is active.
-	bool rt_active = p_environment.is_valid() && environment_get_raytracing_enabled(p_environment);
+	bool rt_active = p_environment.is_valid() && environment_get_pathtracing_enabled(p_environment);
 	bool needs_sdfgi = !rt_active && p_environment.is_valid() && environment_get_sdfgi_enabled(p_environment);
 	bool needs_reset = sdfgi.is_valid() ? sdfgi->version != gi.sdfgi_current_version : false;
 

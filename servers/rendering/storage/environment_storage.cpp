@@ -894,43 +894,43 @@ RSE::EnvironmentSDFGIYScale RendererEnvironmentStorage::environment_get_sdfgi_y_
 	return env->sdfgi_y_scale;
 }
 
-// Raytracing
+// Pathtracing
 
-void RendererEnvironmentStorage::environment_set_raytracing(RID p_env, bool p_enable) {
+void RendererEnvironmentStorage::environment_set_pathtracing(RID p_env, bool p_enable) {
 	Environment *env = environment_owner.get_or_null(p_env);
 	ERR_FAIL_NULL(env);
-	env->raytracing_enabled = p_enable;
+	env->pathtracing_enabled = p_enable;
 }
 
-bool RendererEnvironmentStorage::environment_get_raytracing_enabled(RID p_env) const {
+bool RendererEnvironmentStorage::environment_get_pathtracing_enabled(RID p_env) const {
 	Environment *env = environment_owner.get_or_null(p_env);
 	ERR_FAIL_NULL_V(env, false);
-	return env->raytracing_enabled;
+	return env->pathtracing_enabled;
 }
 
-void RendererEnvironmentStorage::environment_set_raytracing_params(RID p_env, const PackedFloat32Array &p_params) {
+void RendererEnvironmentStorage::environment_set_pathtracing_params(RID p_env, const PackedFloat32Array &p_params) {
 	Environment *env = environment_owner.get_or_null(p_env);
 	ERR_FAIL_NULL(env);
 	for (int i = 0; i < 16 && i < p_params.size(); i++) {
-		env->raytracing_params[i] = p_params[i];
+		env->pathtracing_params[i] = p_params[i];
 	}
 }
 
-PackedFloat32Array RendererEnvironmentStorage::environment_get_raytracing_params(RID p_env) const {
+PackedFloat32Array RendererEnvironmentStorage::environment_get_pathtracing_params(RID p_env) const {
 	Environment *env = environment_owner.get_or_null(p_env);
 	ERR_FAIL_NULL_V(env, PackedFloat32Array());
 	PackedFloat32Array result;
 	result.resize(16);
 	for (int i = 0; i < 16; i++) {
-		result.write[i] = env->raytracing_params[i];
+		result.write[i] = env->pathtracing_params[i];
 	}
 	return result;
 }
 
-const float *RendererEnvironmentStorage::environment_get_raytracing_params_ptr(RID p_env) const {
+const float *RendererEnvironmentStorage::environment_get_pathtracing_params_ptr(RID p_env) const {
 	Environment *env = environment_owner.get_or_null(p_env);
 	ERR_FAIL_NULL_V(env, nullptr);
-	return env->raytracing_params;
+	return env->pathtracing_params;
 }
 
 // Adjustments

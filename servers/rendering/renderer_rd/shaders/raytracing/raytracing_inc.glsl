@@ -15,9 +15,9 @@
 #define RT_PARAM_VIS_MODE 0 // rt_params[0].x - Debug visualization mode (0 = disabled)
 #define RT_PARAM_SAMPLE_COUNT 1 // rt_params[0].y - Samples per pixel
 #define RT_PARAM_MAX_BOUNCES 2 // rt_params[0].z - Maximum ray bounces
-#define RT_PARAM_DLSS_RR_ENABLED 3 // rt_params[0].w - DLSS Ray Reconstruction enabled
-#define RT_PARAM_LIGHT_COUNT 4 // rt_params[1].x - Number of active lights in light buffer
-// Indices 5-14 reserved for future use
+#define RT_PARAM_DENOISER 3 // rt_params[0].w - Denoiser selection (0=none, 1=DLSS RR)
+// Indices 4-13 reserved for future use
+#define RT_PARAM_LIGHT_COUNT 14 // rt_params[3].z - Number of active lights in light buffer
 #define RT_PARAM_FRAME_INDEX 15 // rt_params[3].w - Frame counter for temporal variation
 
 // ============================================================================

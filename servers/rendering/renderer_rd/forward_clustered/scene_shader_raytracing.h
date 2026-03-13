@@ -88,17 +88,13 @@ public:
 	constexpr static uint32_t RT_MAX_PAYLOAD_SIZE = 32;
 	constexpr static uint32_t RT_MAX_HIT_ATTRIB_SIZE = 8;
 
-	// Raytracing parameter indices for env_params[]/rt_params uniform.
-	// Must match RT_PARAM_* defines in raytracing_inc.glsl.
-	enum RaytracingParamIndex {
-		RT_PARAM_VIS_MODE = 0,
-		RT_PARAM_SAMPLE_COUNT = 1,
-		RT_PARAM_MAX_BOUNCES = 2,
-		RT_PARAM_DLSS_RR_ENABLED = 3,
-		RT_PARAM_LIGHT_COUNT = 4,
-		// Indices 5-14 reserved for future use.
-		RT_PARAM_FRAME_INDEX = 15,
-	};
+	// Pathtracing parameter indices - aliased from the shared enum in rendering_server_enums.h.
+	static constexpr int RT_PARAM_VIS_MODE = RSE::PT_PARAM_VIS_MODE;
+	static constexpr int RT_PARAM_SAMPLE_COUNT = RSE::PT_PARAM_SAMPLE_COUNT;
+	static constexpr int RT_PARAM_MAX_BOUNCES = RSE::PT_PARAM_MAX_BOUNCES;
+	static constexpr int RT_PARAM_DENOISER = RSE::PT_PARAM_DENOISER;
+	static constexpr int RT_PARAM_LIGHT_COUNT = RSE::PT_PARAM_LIGHT_COUNT;
+	static constexpr int RT_PARAM_FRAME_INDEX = RSE::PT_PARAM_FRAME_INDEX;
 
 	static inline uint32_t rt_flags_pack(uint32_t p_flags, uint32_t p_sample_count, uint32_t p_max_bounces) {
 		uint32_t result = p_flags;
